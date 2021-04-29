@@ -15,6 +15,7 @@ from sqlalchemy.orm import relationship
 from sqlalchemy.ext.declarative import declarative_base
 Base = declarative_base()
 from forms import CreatePostForm, RegisterForm, LoginForm, CommentForm
+
 load_dotenv(".env")
 secret_key = os.getenv("secret_key")
 email = os.getenv("email")
