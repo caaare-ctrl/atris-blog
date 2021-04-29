@@ -1,5 +1,6 @@
 import os
 from dotenv import load_dotenv
+import smtplib
 from datetime import date
 from functools import wraps
 from flask import Flask, render_template, redirect, url_for, flash, request, abort, g
@@ -17,6 +18,10 @@ from forms import CreatePostForm, RegisterForm, LoginForm, CommentForm
 
 load_dotenv(".env")
 secret_key = os.getenv("secret_key")
+email = os.getenv("email")
+password = os.getenv("password")
+sent_email = os.getenv("sent_email")
+
 app = Flask(__name__)
 app.config['SECRET_KEY'] = secret_key
 ckeditor = CKEditor(app)
@@ -170,9 +175,19 @@ def about():
     return render_template("about.html")
 
 
-@app.route("/contact")
+@app.route("/contact",methods=["GET","POST"])
 def contact():
-    return render_template("contact.html")
+    if request.method == "POST":
+        with smtplib.SMTP("smtp.mail.yahoo.com") as connection:
+            connection.starttls()
+            connection.login(user=email, password=password)
+            connection.sendmail(from_addr=email, to_addrs=sent_email,
+                                msg=f"Subject:Message from viewer \n\nName: {request.form['name']}\n"
+                                    f"Email: {request.form['email']}\n"
+                                    f"Message: {request.form['message']}")
+        print("sent")
+        return render_template("contact.html", message="Successfully sent your message!")
+    return render_template("contact.html", message="Contact Me")
 
 @app.route("/new-post", methods=["GET", "POST"])
 @admin_only
