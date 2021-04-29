@@ -1,3 +1,5 @@
+import os
+from dotenv import load_dotenv
 from datetime import date
 from functools import wraps
 from flask import Flask, render_template, redirect, url_for, flash, request, abort, g
@@ -13,8 +15,10 @@ from sqlalchemy.ext.declarative import declarative_base
 Base = declarative_base()
 from forms import CreatePostForm, RegisterForm, LoginForm, CommentForm
 
+load_dotenv(".env")
+secret_key = os.getenv("secret_key")
 app = Flask(__name__)
-app.config['SECRET_KEY'] = '8BYkEfBA6O6donzWlSihBXox7C0sKR6b'
+app.config['SECRET_KEY'] = secret_key
 ckeditor = CKEditor(app)
 Bootstrap(app)
 
